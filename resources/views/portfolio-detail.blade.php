@@ -1,13 +1,15 @@
 <x-layout 
     :customTitle="$portfolio->title . ' | Yamarta'" 
     :customDescription="Str::limit(strip_tags($portfolio->description), 160)"
-    :customOgImage="asset('storage/' . $portfolio->image)"
+    :customOgImage="$portfolio->images->isNotEmpty() ? asset('storage/' . $portfolio->images->first()->image) : null"
 >
     <!-- Project Hero -->
     <section class="relative pt-32 pb-16 lg:pt-48 lg:pb-24 overflow-hidden bg-dark text-white min-h-[60vh] flex items-center">
         <!-- Background Image -->
         <div class="absolute inset-0 z-0">
-             <img src="{{ asset('storage/' . $portfolio->image) }}" alt="{{ $portfolio->title }}" class="w-full h-full object-cover opacity-20">
+             @if($portfolio->images->isNotEmpty())
+             <img src="{{ asset('storage/' . $portfolio->images->first()->image) }}" alt="{{ $portfolio->title }}" class="w-full h-full object-cover opacity-20">
+             @endif
              <div class="absolute inset-0 bg-gradient-to-t from-dark via-dark/80 to-transparent"></div>
         </div>
         
@@ -43,9 +45,15 @@
                         </p>
                     </div>
                     
-                    <div class="rounded-2xl overflow-hidden shadow-2xl mt-12 bg-white/5 p-2 md:p-4 border border-white/10">
-                        <img src="{{ asset('storage/' . $portfolio->image) }}" alt="{{ $portfolio->title }}" class="w-full h-auto rounded-xl">
+                    @if($portfolio->images->isNotEmpty())
+                    <div class="space-y-8 mt-12 w-full">
+                        @foreach($portfolio->images as $img)
+                        <div class="rounded-2xl overflow-hidden shadow-2xl bg-white/5 p-2 md:p-4 border border-white/10">
+                            <img src="{{ asset('storage/' . $img->image) }}" alt="{{ $portfolio->title }}" class="w-full h-auto rounded-xl">
+                        </div>
+                        @endforeach
                     </div>
+                    @endif
                 </div>
                 
                 <!-- Sidebar -->

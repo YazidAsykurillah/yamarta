@@ -21,11 +21,19 @@ class PortfolioForm
                     ->required()
                     ->maxLength(65535)
                     ->columnSpanFull(),
-                FileUpload::make('image')
-                    ->image()
-                    ->disk('public')
-                    ->directory('portfolios')
-                    ->required()
+                \Filament\Forms\Components\Repeater::make('images')
+                    ->relationship('images')
+                    ->schema([
+                        FileUpload::make('image')
+                            ->image()
+                            ->disk('public')
+                            ->directory('portfolios')
+                            ->required(),
+                        // sort_order is managed by orderColumn
+                    ])
+                    ->orderColumn('sort_order')
+                    ->defaultItems(1)
+                    ->reorderableWithButtons()
                     ->columnSpanFull(),
                 \Filament\Forms\Components\TagsInput::make('tags')
                     ->label('Technologies/Tags')

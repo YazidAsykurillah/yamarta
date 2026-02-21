@@ -261,8 +261,10 @@
                 @forelse($portfolios as $portfolio)
                 <!-- Project -->
                 <div class="group relative overflow-hidden rounded-2xl aspect-[4/3] cursor-pointer shadow-2xl">
-                    <img src="{{ asset('storage/' . $portfolio->image) }}" alt="{{ $portfolio->title }}"
+                    @if($portfolio->images->isNotEmpty())
+                    <img src="{{ asset('storage/' . $portfolio->images->first()->image) }}" alt="{{ $portfolio->title }}"
                         class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                    @endif
                     <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-90 transition-opacity"></div>
                     
                     <a href="{{ route('portfolio.show', $portfolio->slug) }}" class="absolute top-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform translate-x-4 group-hover:translate-x-0 z-20">

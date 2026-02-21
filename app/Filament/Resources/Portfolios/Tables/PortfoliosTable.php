@@ -16,8 +16,11 @@ class PortfoliosTable
     {
         return $table
             ->columns([
-                ImageColumn::make('image')
-                    ->square(),
+                ImageColumn::make('images.image')
+                    ->label('Images')
+                    ->square()
+                    ->stacked()
+                    ->limit(3),
                 TextColumn::make('title')
                     ->searchable()
                     ->sortable(),

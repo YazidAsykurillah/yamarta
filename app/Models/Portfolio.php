@@ -10,12 +10,16 @@ class Portfolio extends Model
         'title',
         'slug',
         'description',
-        'image',
         'tags',
         'external_link',
         'sort_order',
         'is_visible',
     ];
+
+    public function images()
+    {
+        return $this->hasMany(PortfolioImage::class)->orderBy('sort_order');
+    }
 
     protected $casts = [
         'tags' => 'array',
@@ -30,29 +34,10 @@ class Portfolio extends Model
             }
         });
 
-        static::saved(function ($portfolio) {
-            // Fix Windows file permission inheritance for uploaded files
-            if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN' && $portfolio->isDirty('image') && $portfolio->image) {
-                $path = storage_path('app/public/' . $portfolio->image);
-                if (file_exists($path)) {
-                    exec('icacls "' . str_replace('/', '\\', $path) . '" /reset /q');
-                }
-            }
-        });
-
-        static::deleted(function ($portfolio) {
-            if ($portfolio->image) {
-                \Illuminate\Support\Facades\Storage::disk('public')->delete($portfolio->image);
-            }
-        });
-
-        static::updated(function ($portfolio) {
-            if ($portfolio->isDirty('image')) {
-                $originalImage = $portfolio->getOriginal('image');
-                if ($originalImage) {
-                    \Illuminate\Support\Facades\Storage::disk('public')->delete($originalImage);
-                }
-            }
+        static::deleting(function ($portfolio) {
+            $portfolio->images->each(function ($image) {
+                $image->delete();
+            });
         });
     }
 }

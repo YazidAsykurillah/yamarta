@@ -21,7 +21,7 @@
         $url = url()->current();
     @endphp
 
-    <title>{{ $title }}</title>
+    <title>{{ config('app.name').' | '.$title }}</title>
     <meta name="description" content="{{ $description }}">
     @if($keywordsString)
     <meta name="keywords" content="{{ $keywordsString }}">

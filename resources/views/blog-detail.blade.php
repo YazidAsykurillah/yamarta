@@ -17,7 +17,7 @@
         
         <div class="mx-auto max-w-4xl px-6 lg:px-8 relative z-10 w-full text-center">
             <div class="mb-8">
-                <a href="{{ route('blog.index') }}" class="inline-flex items-center text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                <a href="{{ route('blog') }}" class="inline-flex items-center text-sm font-medium text-slate-400 hover:text-white transition-colors">
                     <i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i>
                     Back to Journal
                 </a>

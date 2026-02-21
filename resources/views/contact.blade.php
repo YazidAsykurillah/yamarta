@@ -31,7 +31,7 @@
                             </div>
                             <div>
                                 <h3 class="text-sm font-bold text-dark mb-1">Email Us</h3>
-                                <a href="mailto:hello@yamarta.com" class="text-muted hover:text-primary transition-colors">hello@yamarta.com</a>
+                                <a href="mailto:{{ $site_settings?->email ?? 'hello@yamarta.com' }}" class="text-muted hover:text-primary transition-colors">{{ $site_settings?->email ?? 'hello@yamarta.com' }}</a>
                                 <p class="text-xs text-slate-400 mt-1">We respond within 24 business hours.</p>
                             </div>
                         </div>
@@ -42,7 +42,7 @@
                             </div>
                             <div>
                                 <h3 class="text-sm font-bold text-dark mb-1">Visit Our Office</h3>
-                                <p class="text-muted">Gedung Yamarta, Lt. 3<br>Jl. Sudirman Kav 21, Jakarta Selatan<br>12920, Indonesia</p>
+                                <p class="text-muted">{!! nl2br(e($site_settings?->address ?? "Gedung Yamarta, Lt. 3\nJl. Sudirman Kav 21, Jakarta Selatan\n12920, Indonesia")) !!}</p>
                             </div>
                         </div>
 
@@ -52,7 +52,7 @@
                             </div>
                             <div>
                                 <h3 class="text-sm font-bold text-dark mb-1">Call Us</h3>
-                                <p class="text-muted">+62 21 555 1234</p>
+                                <p class="text-muted">{{ $site_settings?->phone_number ?? '+62 21 555 1234' }}</p>
                                 <p class="text-xs text-slate-400 mt-1">Mon-Fri from 9am to 6pm WIB.</p>
                             </div>
                         </div>

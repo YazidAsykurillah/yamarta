@@ -3,8 +3,47 @@
     :customDescription="Str::limit(strip_tags($portfolio->description), 160)"
     :customOgImage="$portfolio->images->isNotEmpty() ? asset('storage/' . $portfolio->images->first()->image) : null"
 >
+    <!-- Push Swiper CSS to head if push stacks were used, alternatively add locally -->
+    <link rel="stylesheet" href="{{ asset('assets/css/swiper-bundle.min.css') }}" />
+    <style>
+        .swiper-button-next,
+        .swiper-button-prev {
+            color: white !important;
+            background: rgba(255, 255, 255, 0.1) !important;
+            backdrop-filter: blur(8px) !important;
+            border-radius: 50% !important;
+            width: 48px !important;
+            height: 48px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            margin-top: -24px !important;
+        }
+        .swiper-button-next:after,
+        .swiper-button-prev:after {
+            font-size: 20px !important;
+            font-weight: 800 !important;
+            line-height: 1 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            position: relative !important;
+            top: auto !important;
+            left: auto !important;
+            transform: none !important;
+        }
+        .swiper-pagination-bullet {
+            background: rgba(255, 255, 255, 0.5);
+            opacity: 1;
+        }
+        .swiper-pagination-bullet-active {
+            background: white;
+            width: 24px;
+            border-radius: 4px;
+        }
+    </style>
     <!-- Project Hero -->
-    <section class="relative pt-32 pb-16 lg:pt-48 lg:pb-24 overflow-hidden bg-dark text-white min-h-[60vh] flex items-center">
+    <section class="relative pt-32 pb-8 lg:pt-48 lg:pb-12 overflow-hidden bg-dark text-white min-h-[40vh] flex items-center">
         <!-- Background Image -->
         <div class="absolute inset-0 z-0">
              @if($portfolio->images->isNotEmpty())
@@ -34,7 +73,7 @@
     </section>
 
     <!-- Project Details -->
-    <section class="py-16 md:py-24 bg-dark text-white">
+    <section class="pt-8 pb-16 md:pt-12 md:pb-24 bg-dark text-white">
         <div class="mx-auto max-w-7xl px-6 lg:px-8">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24">
                 <!-- Main Content -->
@@ -46,12 +85,33 @@
                     </div>
                     
                     @if($portfolio->images->isNotEmpty())
-                    <div class="space-y-8 mt-12 w-full">
-                        @foreach($portfolio->images as $img)
-                        <div class="rounded-2xl overflow-hidden shadow-2xl bg-white/5 p-2 md:p-4 border border-white/10">
-                            <img src="{{ asset('storage/' . $img->image) }}" alt="{{ $portfolio->title }}" class="w-full h-auto rounded-xl">
-                        </div>
-                        @endforeach
+                    <div class="mt-12 w-full fade-in-up delay-400">
+                        @if($portfolio->images->count() > 1)
+                            <!-- Swiper for Multiple Images -->
+                            <div class="swiper portfolioSwiper rounded-2xl overflow-hidden shadow-2xl bg-white/5 border border-white/10 group">
+                                <div class="swiper-wrapper">
+                                    @foreach($portfolio->images as $img)
+                                    <div class="swiper-slide list-none p-2 md:p-4 pb-12 w-full">
+                                        <div class="aspect-video w-full rounded-xl overflow-hidden relative bg-black/20">
+                                            <img src="{{ asset('storage/' . $img->image) }}" alt="{{ $portfolio->title }}" class="absolute inset-0 w-full h-full object-cover">
+                                        </div>
+                                    </div>
+                                    @endforeach
+                                </div>
+                                <!-- Navigation arrows -->
+                                <div class="swiper-button-next opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                <div class="swiper-button-prev opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                <!-- Pagination -->
+                                <div class="swiper-pagination"></div>
+                            </div>
+                        @else
+                            <!-- Single Image Fallback -->
+                            <div class="rounded-2xl overflow-hidden shadow-2xl bg-white/5 p-2 md:p-4 border border-white/10">
+                                <div class="aspect-video w-full rounded-xl overflow-hidden relative bg-black/20">
+                                    <img src="{{ asset('storage/' . $portfolio->images->first()->image) }}" alt="{{ $portfolio->title }}" class="absolute inset-0 w-full h-full object-cover">
+                                </div>
+                            </div>
+                        @endif
                     </div>
                     @endif
                 </div>
@@ -113,4 +173,32 @@
             </a>
         </div>
     </section>
+    </section>
+
+    <!-- Swiper JS -->
+    <script src="{{ asset('assets/js/swiper-bundle.min.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if(document.querySelector('.portfolioSwiper')) {
+                const swiper = new Swiper('.portfolioSwiper', {
+                    loop: true,
+                    spaceBetween: 20,
+                    centeredSlides: true,
+                    grabCursor: true,
+                    autoplay: {
+                        delay: 5000,
+                        disableOnInteraction: false,
+                    },
+                    pagination: {
+                        el: '.swiper-pagination',
+                        clickable: true,
+                    },
+                    navigation: {
+                        nextEl: '.swiper-button-next',
+                        prevEl: '.swiper-button-prev',
+                    },
+                });
+            }
+        });
+    </script>
 </x-layout>

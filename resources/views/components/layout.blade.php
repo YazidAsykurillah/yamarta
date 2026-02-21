@@ -21,7 +21,10 @@
         $url = url()->current();
     @endphp
 
-    <title>{{ config('app.name').' | '.$title }}</title>
+    <title>{{ $site_settings?->company_name.' | '.$title ?? config('app.name') }}</title>
+    @if($site_settings?->favicon)
+        <link rel="icon" type="image/png" href="{{ asset('storage/' . $site_settings->favicon) }}">
+    @endif
     <meta name="description" content="{{ $description }}">
     @if($keywordsString)
     <meta name="keywords" content="{{ $keywordsString }}">
@@ -62,7 +65,13 @@
                 <!-- Logo -->
                 <div class="flex-shrink-0 cursor-pointer group hover:opacity-80 transition-opacity">
                     <a href="{{ url('/') }}"
-                        class="font-serif text-2xl font-bold tracking-tight text-dark group-hover:text-primary transition-colors duration-300">Yamarta.</a>
+                        class="font-serif text-2xl font-bold tracking-tight text-dark group-hover:text-primary transition-colors duration-300">
+                        @if($site_settings?->logo)
+                            <img src="{{ asset('storage/' . $site_settings->logo) }}" alt="{{ $site_settings->company_name ?? 'Logo' }}" class="h-10 w-auto">
+                        @else
+                            {{ $site_settings?->company_name ?? config('app.name') }}
+                        @endif
+                    </a>
                 </div>
 
                 <!-- Desktop Menu -->
@@ -97,10 +106,39 @@
                 <!-- Mobile menu button -->
                 <div class="-mr-2 flex md:hidden">
                     <button type="button"
+                        id="mobile-menu-button"
                         class="inline-flex items-center justify-center p-2 rounded-md text-muted hover:text-primary focus:outline-none"
                         aria-controls="mobile-menu" aria-expanded="false">
-                        <i data-lucide="menu" class="w-6 h-6"></i>
+                        <span id="menu-icon-open" class="block"><i data-lucide="menu" class="w-6 h-6"></i></span>
+                        <span id="menu-icon-close" class="hidden"><i data-lucide="x" class="w-6 h-6"></i></span>
                     </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div class="md:hidden hidden bg-white border-t border-slate-100 shadow-xl" id="mobile-menu">
+            <div class="px-4 pt-2 pb-6 space-y-2 sm:px-3">
+                <a href="{{ url('/') }}"
+                    class="block px-3 py-2.5 rounded-md text-base font-medium {{ request()->is('/') ? 'text-primary bg-primary/5' : 'text-dark hover:text-primary hover:bg-slate-50' }} transition-colors">Home
+                </a>
+                <a href="{{ url('/about') }}"
+                    class="block px-3 py-2.5 rounded-md text-base font-medium {{ request()->is('about') ? 'text-primary bg-primary/5' : 'text-dark hover:text-primary hover:bg-slate-50' }} transition-colors">About Us
+                </a>
+                <a href="{{ url('/portfolio') }}"
+                    class="block px-3 py-2.5 rounded-md text-base font-medium {{ request()->is('portfolio') ? 'text-primary bg-primary/5' : 'text-dark hover:text-primary hover:bg-slate-50' }} transition-colors">Portfolio
+                </a>
+                <a href="{{ url('/blog') }}"
+                    class="block px-3 py-2.5 rounded-md text-base font-medium {{ request()->is('blog*') ? 'text-primary bg-primary/5' : 'text-dark hover:text-primary hover:bg-slate-50' }} transition-colors">Journal
+                </a>
+                <a href="{{ url('/contact') }}"
+                    class="block px-3 py-2.5 rounded-md text-base font-medium {{ request()->is('contact') ? 'text-primary bg-primary/5' : 'text-dark hover:text-primary hover:bg-slate-50' }} transition-colors">Contact
+                </a>
+                <div class="mt-6 pt-2 px-3">
+                    <a href="{{ url('/contact') }}"
+                        class="flex w-full justify-center bg-primary text-white px-5 py-3 rounded-lg text-base font-semibold hover:bg-indigo-700 transition-all duration-300 shadow-md">
+                        Start Project
+                    </a>
                 </div>
             </div>
         </div>
@@ -115,7 +153,13 @@
         <div class="mx-auto max-w-7xl px-6 lg:px-8">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
                 <div class="col-span-1 md:col-span-1">
-                    <span class="font-serif text-2xl font-bold text-white tracking-tight">Yamarta.</span>
+                    <span class="font-serif text-2xl font-bold text-white tracking-tight">
+                        @if($site_settings?->logo)
+                            <img src="{{ asset('storage/' . $site_settings->logo) }}" alt="{{ $site_settings->company_name ?? 'Logo' }}" class="h-10 w-auto">
+                        @else
+                            {{ $site_settings?->company_name ?? 'Yamarta.' }}
+                        @endif
+                    </span>
                     <p class="mt-4 text-sm leading-relaxed text-slate-400">
                         Strategic digital partner for growing businesses aiming for the next level.
                     </p>
@@ -143,12 +187,23 @@
                 <div class="col-span-1">
                     <h4 class="text-white font-bold mb-4">Social</h4>
                     <div class="flex space-x-4">
-                        <a href="#" class="hover:text-white transition-colors"><i data-lucide="linkedin"
-                                class="w-5 h-5"></i></a>
-                        <a href="#" class="hover:text-white transition-colors"><i data-lucide="twitter"
-                                class="w-5 h-5"></i></a>
-                        <a href="#" class="hover:text-white transition-colors"><i data-lucide="instagram"
-                                class="w-5 h-5"></i></a>
+                        @foreach($social_links as $link)
+                            <a href="{{ $link->url }}" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors" title="{{ $link->name }}">
+                                @if(strtolower($link->name) == 'facebook')
+                                    <i data-lucide="facebook" class="w-5 h-5"></i>
+                                @elseif(strtolower($link->name) == 'twitter' || strtolower($link->name) == 'x')
+                                    <i data-lucide="twitter" class="w-5 h-5"></i>
+                                @elseif(strtolower($link->name) == 'instagram')
+                                    <i data-lucide="instagram" class="w-5 h-5"></i>
+                                @elseif(strtolower($link->name) == 'linkedin')
+                                    <i data-lucide="linkedin" class="w-5 h-5"></i>
+                                @elseif(strtolower($link->name) == 'youtube')
+                                    <i data-lucide="youtube" class="w-5 h-5"></i>
+                                @else
+                                    <i data-lucide="link" class="w-5 h-5"></i>
+                                @endif
+                            </a>
+                        @endforeach
                     </div>
                 </div>
             </div>
@@ -181,6 +236,32 @@
                 nav.classList.add('bg-white/70');
             }
         });
+
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const menuIconOpen = document.getElementById('menu-icon-open');
+        const menuIconClose = document.getElementById('menu-icon-close');
+
+        if (mobileMenuButton && mobileMenu) {
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+                const isHidden = mobileMenu.classList.contains('hidden');
+                mobileMenuButton.setAttribute('aria-expanded', !isHidden);
+                
+                if (isHidden) {
+                    menuIconOpen.classList.remove('hidden');
+                    menuIconOpen.classList.add('block');
+                    menuIconClose.classList.add('hidden');
+                    menuIconClose.classList.remove('block');
+                } else {
+                    menuIconOpen.classList.add('hidden');
+                    menuIconOpen.classList.remove('block');
+                    menuIconClose.classList.remove('hidden');
+                    menuIconClose.classList.add('block');
+                }
+            });
+        }
     </script>
 </body>
 

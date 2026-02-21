@@ -1,5 +1,5 @@
 <x-layout 
-    :customTitle="$blog->title . ' | Yamarta'" 
+    :customTitle="$blog->title" 
     :customDescription="Str::limit(strip_tags($blog->excerpt ?? $blog->content), 160)"
     :customOgImage="$blog->image ? asset('storage/' . $blog->image) : null"
 >

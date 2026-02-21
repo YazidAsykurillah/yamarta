@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class SeoSetting extends Model
 {
@@ -27,6 +28,21 @@ class SeoSetting extends Model
                 if (file_exists($path)) {
                     exec('icacls "' . str_replace('/', '\\', $path) . '" /reset /q');
                 }
+            }
+        });
+
+        static::updating(function ($setting) {
+            if ($setting->isDirty('og_image')) {
+                $oldImage = $setting->getOriginal('og_image');
+                if ($oldImage) {
+                    Storage::disk('public')->delete($oldImage);
+                }
+            }
+        });
+
+        static::deleting(function ($setting) {
+            if ($setting->og_image) {
+                Storage::disk('public')->delete($setting->og_image);
             }
         });
     }

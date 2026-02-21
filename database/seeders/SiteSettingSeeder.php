@@ -13,8 +13,8 @@ class SiteSettingSeeder extends Seeder
     public function run(): void
     {
         \App\Models\SiteSetting::create([
-            'company_name' => 'Yamarta',
-            'email' => 'info@yamarta.test',
+            'company_name' => 'COMPANY_NAME',
+            'email' => 'info@email.test',
             'phone_number' => '+1234567890',
             'address' => '123 Main Street',
         ]);

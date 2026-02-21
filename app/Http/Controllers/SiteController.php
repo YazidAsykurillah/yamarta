@@ -26,4 +26,25 @@ class SiteController extends Controller
     {
         return view('contact');
     }
+
+    public function submitContact(Request $request)
+    {
+        // Honeypot check: if the hidden field is filled, it's likely a bot.
+        // We pretend the submission was successful to not give them a clue.
+        if (!empty($request->input('website_url'))) {
+            return redirect()->back()->with('success', 'Your message has been sent successfully. We will get back to you shortly!');
+        }
+
+        $validated = $request->validate([
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'company' => 'nullable|string|max:255',
+            'message' => 'required|string',
+        ]);
+
+        \App\Models\Message::create($validated);
+
+        return redirect()->back()->with('success', 'Your message has been sent successfully. We will get back to you shortly!');
+    }
 }

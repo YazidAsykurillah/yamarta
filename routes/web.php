@@ -10,6 +10,9 @@ Route::get('/portfolio', [\App\Http\Controllers\PortfolioController::class, 'ind
 Route::get('/portfolio/{slug}', [\App\Http\Controllers\PortfolioController::class, 'show'])->name('portfolio.show');
 
 Route::get('/contact', [\App\Http\Controllers\SiteController::class, 'contact'])->name('contact');
+Route::post('/contact', [\App\Http\Controllers\SiteController::class, 'submitContact'])
+    ->name('contact.submit')
+    ->middleware('throttle:3,1'); // Limit to 3 requests per minute per IP
 
 // Blog Routes
 Route::get('/blog', [\App\Http\Controllers\BlogController::class, 'index'])->name('blog');

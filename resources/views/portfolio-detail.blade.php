@@ -1,5 +1,5 @@
 <x-layout 
-    :customTitle="$portfolio->title . ' | Yamarta'" 
+    :customTitle="$portfolio->title" 
     :customDescription="Str::limit(strip_tags($portfolio->description), 160)"
     :customOgImage="$portfolio->images->isNotEmpty() ? asset('storage/' . $portfolio->images->first()->image) : null"
 >

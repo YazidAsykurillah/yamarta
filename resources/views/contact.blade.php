@@ -66,37 +66,55 @@
                     <div class="relative bg-white/80 backdrop-blur-xl rounded-3xl p-8 lg:p-10 shadow-2xl border border-white/50">
                         <h2 class="text-2xl font-serif font-bold text-dark mb-6">Send us a message</h2>
                         
-                        <form action="#" method="POST" class="space-y-6">
+                        @if(session('success'))
+                            <div class="mb-6 p-4 rounded-lg bg-green-50 border border-green-200 text-green-800 font-medium">
+                                {{ session('success') }}
+                            </div>
+                        @endif
+
+                        <form action="{{ route('contact.submit') }}" method="POST" class="space-y-6" onsubmit="document.getElementById('submit-btn').disabled=true; document.getElementById('submit-text').innerText='Sending...'; document.getElementById('submit-icon').classList.add('animate-pulse');">
                             @csrf
+                            
+                            <!-- Honeypot Field -->
+                            <div style="display: none !important;">
+                                <label for="website_url">Website URL</label>
+                                <input type="text" name="website_url" id="website_url" tabindex="-1" autocomplete="off">
+                            </div>
+
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div class="space-y-2">
                                     <label for="first_name" class="block text-sm font-medium text-dark">First Name</label>
-                                    <input type="text" name="first_name" id="first_name" class="w-full px-4 py-3 rounded-lg border border-slate-200 bg-white/50 focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" placeholder="John">
+                                    <input type="text" name="first_name" value="{{ old('first_name') }}" id="first_name" required class="w-full px-4 py-3 rounded-lg border border-slate-200 bg-white/50 focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" placeholder="John">
+                                    @error('first_name') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                                 </div>
                                 <div class="space-y-2">
                                     <label for="last_name" class="block text-sm font-medium text-dark">Last Name</label>
-                                    <input type="text" name="last_name" id="last_name" class="w-full px-4 py-3 rounded-lg border border-slate-200 bg-white/50 focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" placeholder="Doe">
+                                    <input type="text" name="last_name" value="{{ old('last_name') }}" id="last_name" required class="w-full px-4 py-3 rounded-lg border border-slate-200 bg-white/50 focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" placeholder="Doe">
+                                    @error('last_name') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                                 </div>
                             </div>
 
                             <div class="space-y-2">
                                 <label for="email" class="block text-sm font-medium text-dark">Email Address</label>
-                                <input type="email" name="email" id="email" class="w-full px-4 py-3 rounded-lg border border-slate-200 bg-white/50 focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" placeholder="john@company.com">
+                                <input type="email" name="email" value="{{ old('email') }}" id="email" required class="w-full px-4 py-3 rounded-lg border border-slate-200 bg-white/50 focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" placeholder="john@company.com">
+                                @error('email') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                             </div>
 
                             <div class="space-y-2">
                                 <label for="company" class="block text-sm font-medium text-dark">Company <span class="text-slate-400 font-normal">(Optional)</span></label>
-                                <input type="text" name="company" id="company" class="w-full px-4 py-3 rounded-lg border border-slate-200 bg-white/50 focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" placeholder="Acme Corp">
+                                <input type="text" name="company" value="{{ old('company') }}" id="company" class="w-full px-4 py-3 rounded-lg border border-slate-200 bg-white/50 focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" placeholder="Acme Corp">
+                                @error('company') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                             </div>
 
                             <div class="space-y-2">
                                 <label for="message" class="block text-sm font-medium text-dark">How can we help?</label>
-                                <textarea name="message" id="message" rows="4" class="w-full px-4 py-3 rounded-lg border border-slate-200 bg-white/50 focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all resize-none" placeholder="Tell us about your project goals, timeline, and budget..."></textarea>
+                                <textarea name="message" id="message" rows="4" required class="w-full px-4 py-3 rounded-lg border border-slate-200 bg-white/50 focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all resize-none" placeholder="Tell us about your project goals, timeline, and budget...">{{ old('message') }}</textarea>
+                                @error('message') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                             </div>
 
-                            <button type="submit" class="w-full bg-primary text-white py-4 rounded-lg font-bold shadow-lg shadow-primary/30 hover:shadow-primary/50 hover:bg-indigo-700 hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2 group">
-                                Send Message
-                                <i data-lucide="send" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
+                            <button type="submit" id="submit-btn" class="w-full bg-primary text-white py-4 rounded-lg font-bold shadow-lg shadow-primary/30 hover:shadow-primary/50 hover:bg-indigo-700 hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2 group disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:-translate-y-0">
+                                <span id="submit-text">Send Message</span>
+                                <i data-lucide="send" id="submit-icon" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
                             </button>
                             
                             <p class="text-center text-xs text-slate-500 mt-4">
